@@ -1,0 +1,61 @@
+---
+- name: Docker Installation
+  hosts: VM
+  remote_user: projet
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      tags: [docker]
+
+    - name: Install apt-transport-https package
+      apt:
+        name: apt-transport-https
+        state: present
+      tags: [docker]
+
+    - name: Install ca-certificates package
+      apt:
+        name: ca-certificates
+        state: present
+      tags: [docker]
+
+    - name: Install curl package
+      apt:
+        name: curl
+        state: present
+      tags: [docker]
+
+    - name: Install software-properties-common package
+      apt:
+        name: software-properties-common
+        state: present
+      tags: [docker]
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+      tags: [docker]
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
+        state: present
+      tags: [docker]
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+      tags: [docker]
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+      tags: [docker]
